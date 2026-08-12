@@ -39,3 +39,15 @@ jobs:
           git add flights.db
           git diff --staged --quiet || git commit -m "Update price history [skip ci]"
           git push
+
+      - name: Send digest (every 2 hours)
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          HOUR=$(date -u +%H)
+          if [ $((10#$HOUR % 2)) -eq 0 ]; then
+            python digest.py
+          else
+            echo "Ungerade Stunde ($HOUR UTC) - Digest wird uebersprungen"
+          fi

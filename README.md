@@ -92,11 +92,20 @@ Ein Angebot löst einen Alarm aus, wenn (siehe `analyze.py`):
 1. der Preis ≥ `DROP_PERCENT` (Standard 15 %) unter dem gleitenden Durchschnitt der letzten
    `ROLLING_WINDOW_DAYS` Tage für dieselbe Route liegt, **und/oder** unter `FIXED_THRESHOLD`
    liegt (0 = deaktiviert), **und zusätzlich**
-2. der Preis umgerechnet unter `MAX_PRICE_EUR` liegt (Standard 300 €, 0 = deaktiviert) —
+2. der Preis umgerechnet unter `MAX_PRICE_EUR` liegt (Standard 400 €, 0 = deaktiviert) —
    harte Obergrenze, unabhängig vom Rabatt.
 
 Um Spam zu vermeiden, wird pro Route+Abflugdatum maximal alle `ALERT_COOLDOWN_HOURS` Stunden
 ein Alarm gesendet (`alerts_sent`-Tabelle in SQLite).
+
+## Digest (`digest.py`)
+
+Zusätzlich zum Preisalarm gibt es alle 2 Stunden (12×/Tag) eine Sammel-Nachricht mit **allen**
+aktuell gecachten Do→Mo-Flügen unter `MAX_PRICE_EUR` — unabhängig davon, ob sie auch den
+Rabatt-Check (Preisalarm-Logik oben) bestehen. Der Preisalarm-Check (`main.py`) selbst läuft
+weiterhin stündlich (24×/Tag). Im GitHub-Actions-Workflow ist das über eine Stunden-Prüfung
+(`date -u +%H`, gerade Stunde → Digest) im selben stündlichen Lauf umgesetzt, kein separater
+Cronjob nötig.
 
 `currency.py` holt den Live-Wechselkurs (ECB via frankfurter.app) für die 300€-Grenze und für
 die zweite Währung in den Nachrichten.
