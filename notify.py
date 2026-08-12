@@ -93,6 +93,7 @@ def format_alert(alert: Alert) -> str:
     date_line += "  ✅ Do–Mo" if alert.weekday_match else "  ⚠️ abweichend"
 
     lines = [
+        f"🚨 PREISALARM 🚨",
         f"✈️ {label} ({alert.destination}) ab {alert.origin}",
         price_line,
         date_line,
