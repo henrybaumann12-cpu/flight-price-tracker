@@ -50,6 +50,8 @@ DROP_PERCENT = _float_env("DROP_PERCENT", 0.15)   # 15% unter gleitendem Durchsc
 FIXED_THRESHOLD = _float_env("FIXED_THRESHOLD", 0)  # 0 = deaktiviert
 MIN_SAMPLES_FOR_AVERAGE = _int_env("MIN_SAMPLES_FOR_AVERAGE", 3)
 ALERT_COOLDOWN_HOURS = _int_env("ALERT_COOLDOWN_HOURS", 20)
+# Harte Obergrenze in EUR: nur Preise darunter werden gemeldet, 0 = deaktiviert
+MAX_PRICE_EUR = _float_env("MAX_PRICE_EUR", 300)
 
 # --- Telegram ---
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")

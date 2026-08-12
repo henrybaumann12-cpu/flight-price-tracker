@@ -4,6 +4,7 @@ import logging
 from dataclasses import dataclass
 
 import config
+import currency
 import db
 
 logger = logging.getLogger(__name__)
@@ -48,6 +49,15 @@ def evaluate_offer(conn, offer: dict) -> Alert | None:
 
     if reason is None:
         return None
+
+    if config.MAX_PRICE_EUR > 0:
+        price_eur = currency.convert(price, offer["currency"], "EUR")
+        if price_eur is None or price_eur >= config.MAX_PRICE_EUR:
+            logger.info(
+                "Alert fuer %s -> %s unterdrueckt (%.2f %s ueber %s EUR Obergrenze)",
+                origin, destination, price, offer["currency"], config.MAX_PRICE_EUR,
+            )
+            return None
 
     return Alert(
         origin=origin,
