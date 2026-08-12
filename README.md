@@ -86,12 +86,17 @@ mit `StartCalendarInterval`-Einträgen, falls Cron durch Energiesparmodus ausges
 
 Ein Angebot löst einen Alarm aus, wenn (siehe `analyze.py`):
 
-- der Preis ≥ `DROP_PERCENT` (Standard 15 %) unter dem gleitenden Durchschnitt der letzten
-  `ROLLING_WINDOW_DAYS` Tage für dieselbe Route liegt, **und/oder**
-- der Preis unter `FIXED_THRESHOLD` liegt (0 = deaktiviert).
+1. der Preis ≥ `DROP_PERCENT` (Standard 15 %) unter dem gleitenden Durchschnitt der letzten
+   `ROLLING_WINDOW_DAYS` Tage für dieselbe Route liegt, **und/oder** unter `FIXED_THRESHOLD`
+   liegt (0 = deaktiviert), **und zusätzlich**
+2. der Preis umgerechnet unter `MAX_PRICE_EUR` liegt (Standard 300 €, 0 = deaktiviert) —
+   harte Obergrenze, unabhängig vom Rabatt.
 
 Um Spam zu vermeiden, wird pro Route+Abflugdatum maximal alle `ALERT_COOLDOWN_HOURS` Stunden
 ein Alarm gesendet (`alerts_sent`-Tabelle in SQLite).
+
+`currency.py` holt den Live-Wechselkurs (ECB via frankfurter.app) für die 300€-Grenze und für
+die zweite Währung in den Nachrichten.
 
 ## Datenbank
 
