@@ -10,7 +10,7 @@ import config
 logger = logging.getLogger(__name__)
 
 
-def _matches_preferred_pattern(flight_date: str, return_date: str | None) -> bool:
+def matches_preferred_pattern(flight_date: str, return_date: str | None) -> bool:
     if not flight_date or not return_date:
         return False
     try:
@@ -66,7 +66,7 @@ def fetch_route(origin: str, destination: str) -> list[dict]:
                     "booking_token": None,
                     "deep_link": None,
                     "fetched_at": fetched_at,
-                    "weekday_match": _matches_preferred_pattern(flight_date, return_date),
+                    "weekday_match": matches_preferred_pattern(flight_date, return_date),
                 }
             )
 

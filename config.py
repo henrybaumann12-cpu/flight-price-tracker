@@ -39,10 +39,13 @@ CURRENCY = os.getenv("CURRENCY", "BRL")
 DEPART_DATE = os.getenv("DEPART_DATE", "")
 MAX_RESULTS_PER_ROUTE = _int_env("MAX_RESULTS_PER_ROUTE", 20)
 
-# Bevorzugtes Reisemuster (nur Anzeige/Markierung, die API kann nicht nach
-# Wochentag filtern): Abflug Donnerstag, Rueckflug Montag
+# Bevorzugtes Reisemuster: Abflug Donnerstag, Rueckflug Montag. Die API kann nicht
+# nach Wochentag filtern, daher wird client-seitig gefiltert.
 PREFERRED_DEPART_WEEKDAY = 3  # Montag=0 ... Donnerstag=3
 PREFERRED_RETURN_WEEKDAY = 0  # Montag=0
+# Erstmal nur Do->Mo-Kombinationen melden (harter Filter), Abweichungen werden
+# weiterhin gespeichert (fuer die Preishistorie), aber nicht gemeldet
+REQUIRE_PREFERRED_PATTERN = os.getenv("REQUIRE_PREFERRED_PATTERN", "true").lower() == "true"
 
 # --- Preisalarm ---
 ROLLING_WINDOW_DAYS = _int_env("ROLLING_WINDOW_DAYS", 14)

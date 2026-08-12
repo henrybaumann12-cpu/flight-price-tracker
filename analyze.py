@@ -30,6 +30,9 @@ def evaluate_offer(conn, offer: dict) -> Alert | None:
     if price is None:
         return None
 
+    if config.REQUIRE_PREFERRED_PATTERN and not offer.get("weekday_match", False):
+        return None
+
     history = db.get_recent_prices(conn, origin, destination, config.ROLLING_WINDOW_DAYS)
     # history enthaelt bereits den soeben eingefuegten Preis -> fuer den Vergleich ausschliessen
     history = [p for p in history if p != price] or history

@@ -28,11 +28,14 @@ Montevideo 🇺🇾, Asunción 🇵🇾, La Paz 🇧🇴, Caracas 🇻🇪, Geor
 
 ## Reisemuster (Do → Mo)
 
-Bevorzugt wird Abflug **Donnerstag**, Rückflug **Montag** (`PREFERRED_DEPART_WEEKDAY` /
-`PREFERRED_RETURN_WEEKDAY` in `config.py`). Die Travelpayouts-API kann aber nicht nach Wochentag
-gefiltert werden – es wird stattdessen breit nach den günstigsten gecachten Fares pro Ziel gesucht
-und jedes Ergebnis mit ✅ (Muster passt) oder ⚠️ (abweichende Tage) markiert. Guenstige Abweichungen
-werden also weiterhin gemeldet, nur eben entsprechend gekennzeichnet.
+Erforderlich ist Abflug **Donnerstag**, Rückflug **Montag** (`PREFERRED_DEPART_WEEKDAY` /
+`PREFERRED_RETURN_WEEKDAY` in `config.py`). Die Travelpayouts-API kann nicht nach Wochentag
+filtern – es wird daher breit nach den günstigsten gecachten Fares pro Ziel gesucht und
+client-seitig auf Do→Mo geprüft (`fetch.matches_preferred_pattern`). Mit
+`REQUIRE_PREFERRED_PATTERN=true` (Standard) werden **nur** Do→Mo-Treffer gemeldet, Abweichungen
+werden zwar weiter in der Preishistorie gespeichert (fließen in den Durchschnitt ein), aber nicht
+als Alarm gesendet. Zum Deaktivieren des Filters (dann werden auch abweichende Tage gemeldet):
+`REQUIRE_PREFERRED_PATTERN=false` in `.env` setzen.
 
 ## Setup
 

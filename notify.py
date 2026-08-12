@@ -48,7 +48,6 @@ def format_alert(alert: Alert) -> str:
     date_line = f"📅 {_fmt_date(alert.flight_date)}"
     if alert.return_date:
         date_line += f" → {_fmt_date(alert.return_date)}"
-    date_line += " ✅" if alert.weekday_match else " ⚠️"
 
     return "\n".join(
         [
