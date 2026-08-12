@@ -1,0 +1,6 @@
+.env
+*.db
+!flights.db
+*.log
+__pycache__/
+.venv/
