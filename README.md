@@ -17,7 +17,22 @@ ab, speichert sie in SQLite und meldet über Telegram, wenn ein Preis ungewöhnl
 - `analyze.py` – Preistrend-/Ausreißer-Erkennung
 - `notify.py` – Telegram-Benachrichtigung (kompaktes Format mit Länder-Flaggen-Emoji)
 - `locations.py` – IATA-Code → Stadt/Land/Flagge-Mapping für die Südamerika-Ziele
-- `main.py` – orchestriert fetch → db → analyze → notify
+- `digest.py` – 2-stündliche Sammel-Nachricht aller Do→Mo-Flüge unter `MAX_PRICE_EUR`
+- `cheap_flights.py` – stündliche Sammel-Nachricht aller Flüge unter `MAX_PRICE_EUR`,
+  **ohne** Do→Mo-Zwang (jeder Wochentag zählt, nur der Preis muss stimmen)
+- `main.py` – orchestriert fetch → db → analyze → notify (+ cheap_flights)
+
+## Drei Arten von Telegram-Nachrichten
+
+1. **Preisalarm** (`main.py`, stündlich): Do→Mo, unter `MAX_PRICE_EUR`, **und** deutlich unter
+   dem historischen Durchschnitt der Route (`DROP_PERCENT`/`FIXED_THRESHOLD`) — die strengste Stufe.
+2. **Digest** (`digest.py`, alle 2h): alle aktuell gecachten Do→Mo-Flüge unter `MAX_PRICE_EUR`,
+   unabhängig vom Durchschnittsvergleich.
+3. **Cheap Flights** (`cheap_flights.py`, stündlich, Teil von `main.py`): alle Flüge unter
+   `MAX_PRICE_EUR` **ohne** Wochentag-Einschränkung — reiner Preis-Cutoff, jeder Fund wird mit
+   "(Do→Mo)" markiert, falls er zufällig das Muster trifft. Diese Angebote werden **nicht** in
+   der Datenbank gespeichert (nur die Do→Mo-Treffer fließen in die Preishistorie ein, damit der
+   Durchschnittsvergleich nicht durch andere Wochentag-Muster verzerrt wird).
 
 ## Ziele
 

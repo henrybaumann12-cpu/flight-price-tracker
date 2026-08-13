@@ -74,9 +74,6 @@ def fetch_calendar_route(origin: str, destination: str, year_month: str) -> list
         flight_date = (entry.get("departure_at") or "")[:10]
         return_date = (entry.get("return_at") or "")[:10] or None
 
-        if config.REQUIRE_PREFERRED_PATTERN and not matches_preferred_pattern(flight_date, return_date):
-            continue
-
         results.append(
             {
                 "origin": origin,
@@ -108,6 +105,6 @@ def fetch_all() -> list[dict]:
     for origin in config.ORIGINS:
         for destination in config.DESTINATIONS:
             route_results = fetch_calendar_route(origin, destination, year_month)
-            logger.info("%d Do->Mo-Angebote fuer %s -> %s (%s)", len(route_results), origin, destination, year_month)
+            logger.info("%d Angebote fuer %s -> %s (%s)", len(route_results), origin, destination, year_month)
             all_results.extend(route_results)
     return all_results
