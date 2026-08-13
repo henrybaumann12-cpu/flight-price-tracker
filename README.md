@@ -12,7 +12,7 @@ ab, speichert sie in SQLite und meldet über Telegram, wenn ein Preis ungewöhnl
 
 ## Struktur
 
-- `fetch.py` – Travelpayouts-API-Abfrage (`v1/prices/cheap`)
+- `fetch.py` – Travelpayouts-API-Abfrage (`v1/prices/calendar`)
 - `db.py` – SQLite-Speicherung (Preisverlauf + gesendete Alarme)
 - `analyze.py` – Preistrend-/Ausreißer-Erkennung
 - `notify.py` – Telegram-Benachrichtigung (kompaktes Format mit Länder-Flaggen-Emoji)
@@ -29,12 +29,21 @@ Montevideo 🇺🇾, Asunción 🇵🇾, La Paz 🇧🇴, Caracas 🇻🇪, Geor
 ## Reisemuster (Do → Mo)
 
 Erforderlich ist Abflug **Donnerstag**, Rückflug **Montag** (`PREFERRED_DEPART_WEEKDAY` /
-`PREFERRED_RETURN_WEEKDAY` in `config.py`). Die Travelpayouts-API kann nicht nach Wochentag
-filtern – es wird daher breit nach den günstigsten gecachten Fares pro Ziel gesucht und
-client-seitig auf Do→Mo geprüft (`fetch.matches_preferred_pattern`). Mit
-`REQUIRE_PREFERRED_PATTERN=true` (Standard) werden **nur** Do→Mo-Treffer gemeldet, Abweichungen
-werden zwar weiter in der Preishistorie gespeichert (fließen in den Durchschnitt ein), aber nicht
-als Alarm gesendet. Zum Deaktivieren des Filters (dann werden auch abweichende Tage gemeldet):
+`PREFERRED_RETURN_WEEKDAY` in `config.py`).
+
+**Wichtige Erkenntnis:** Der einfache "cheapest price"-Endpoint (`v1/prices/cheap`) liefert nur
+einen zufälligen Cache-Treffer pro Ziel (das, was zufällig andere Nutzer zuletzt gesucht haben) –
+in über 200 Testabfragen kam dabei **kein einziges Mal** eine Do→Mo-Kombination vor, exakte
+Tagesangaben lieferten sogar durchgehend 0 Treffer. Daher nutzt `fetch.py` stattdessen den
+**Kalender-Endpoint** (`v1/prices/calendar`), der für einen ganzen Monat viele einzelne
+Abflugtermine mit echten Daten zurückgibt (~50-70 pro Monat/Route). Daraus werden client-seitig
+die tatsächlichen Do→Mo-Kombinationen herausgefiltert (`fetch.matches_preferred_pattern`).
+
+Da ein Monatsaufruf pro Route relativ "teuer" ist, wird pro Stunde nur **ein** Zielmonat aus den
+kommenden `SEARCH_MONTHS_AHEAD` Monaten abgefragt (rotierend, `fetch.select_target_month`) – so
+werden alle Monate im Suchzeitraum nach und nach abgedeckt, ohne pro Lauf zu viele API-Calls zu
+brauchen. Mit `REQUIRE_PREFERRED_PATTERN=true` (Standard) werden nur Do→Mo-Treffer überhaupt
+gespeichert und gemeldet. Zum Deaktivieren (dann zaehlen auch andere Wochentag-Kombinationen):
 `REQUIRE_PREFERRED_PATTERN=false` in `.env` setzen.
 
 ## Setup

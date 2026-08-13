@@ -35,14 +35,15 @@ ORIGINS = _list_env("ORIGINS", "GRU,CGH")
 DESTINATIONS = _list_env("DESTINATIONS", ",".join(SOUTH_AMERICA.keys()))
 CURRENCY = os.getenv("CURRENCY", "BRL")
 
-# Optionaler Monatsfilter im Format YYYY-MM, leer = keine Einschraenkung
-DEPART_DATE = os.getenv("DEPART_DATE", "")
 MAX_RESULTS_PER_ROUTE = _int_env("MAX_RESULTS_PER_ROUTE", 20)
 
-# Bevorzugtes Reisemuster: Abflug Donnerstag, Rueckflug Montag. Die API kann nicht
-# nach Wochentag filtern, daher wird client-seitig gefiltert.
+# Bevorzugtes Reisemuster: Abflug Donnerstag, Rueckflug Montag. Wird ueber den
+# Kalender-Endpoint (v1/prices/calendar, ein ganzer Monat mit vielen Abflugterminen
+# pro Aufruf) gesucht und client-seitig gefiltert, rotierend ueber SEARCH_MONTHS_AHEAD
+# Monate (ein anderer Monat pro Stunde, siehe fetch.select_target_month).
 PREFERRED_DEPART_WEEKDAY = 3  # Montag=0 ... Donnerstag=3
 PREFERRED_RETURN_WEEKDAY = 0  # Montag=0
+SEARCH_MONTHS_AHEAD = _int_env("SEARCH_MONTHS_AHEAD", 6)
 # Erstmal nur Do->Mo-Kombinationen melden (harter Filter), Abweichungen werden
 # weiterhin gespeichert (fuer die Preishistorie), aber nicht gemeldet
 REQUIRE_PREFERRED_PATTERN = os.getenv("REQUIRE_PREFERRED_PATTERN", "true").lower() == "true"
